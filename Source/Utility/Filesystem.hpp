@@ -9,7 +9,7 @@
 #pragma once
 #include "../Stdinclude.hpp"
 
-inline std::string Readfile(std::string Path)
+inline std::string Readfile(const std::string Path)
 {
     if (const auto Filehandle = std::fopen(Path.c_str(), "rb"))
     {
@@ -26,7 +26,7 @@ inline std::string Readfile(std::string Path)
 
     return {};
 }
-inline bool Writefile(std::string Path, std::string Buffer)
+inline bool Writefile(const std::string Path, const std::string &Buffer)
 {
     if (const auto Filehandle = std::fopen(Path.c_str(), "wb"))
     {
@@ -37,7 +37,7 @@ inline bool Writefile(std::string Path, std::string Buffer)
 
     return false;
 }
-inline bool Fileexists(std::string Path)
+inline bool Fileexists(const std::string Path)
 {
     if (const auto Filehandle = std::fopen(Path.c_str(), "rb"))
     {
@@ -50,7 +50,7 @@ inline bool Fileexists(std::string Path)
 
 // List all files in a directory.
 #if defined(_WIN32)
-inline std::vector<std::string> Findfiles(std::string Searchpath, std::string_view Extension)
+inline std::vector<std::string> Listfiles(std::string Searchpath, std::string_view Extension)
 {
     std::vector<std::string> Filenames{};
     WIN32_FIND_DATAA Filedata;
@@ -85,7 +85,7 @@ inline std::vector<std::string> Findfiles(std::string Searchpath, std::string_vi
     return Filenames;
 }
 #else
-inline std::vector<std::string> Findfiles(std::string Searchpath, std::string_view Extension)
+inline std::vector<std::string> Listfiles(std::string Searchpath, std::string_view Extension)
 {
     std::vector<std::string> Filenames{};
     struct stat Fileinfo;
