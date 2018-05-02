@@ -104,16 +104,41 @@ namespace Backend
         }
         std::vector<size_t> byDescription(std::string_view Criteria)
         {
+            std::unordered_map<size_t, size_t> Positives;
+            std::vector<std::string> Tokens{};
             std::vector<size_t> Results{};
 
+            // Tokenize the input.
+            for (const auto &Item : Criteria)
+            {
+                if (Item == ' ' || Item == '.' || Item == ',')
+                {
+                    Tokens.emplace_back();
+                    continue;
+                }
+
+                Tokens.back().push_back(Item);
+            }
+
+            // Find as many tokens as possible.
             std::for_each(Manifeststorage.cbegin(), Manifeststorage.cend(), [&](const auto &Item) -> void
             {
-                if (std::strstr(Item.Description.c_str(), Criteria.data()))
+                for (const auto &Entry : Tokens)
                 {
-                    Results.push_back(Item.Index);
+                    if (std::strstr(Item.Description.c_str(), Entry.c_str()))
+                    {
+                        Positives[Item.Index]++;
+                    }
                 }
             });
 
+            // Sort the map by number of tokens.
+            std::vector<std::pair<size_t, size_t>> Sortedvector;
+            for (const auto &Item : Positives) Sortedvector.push_back({ Item.second, Item.first });
+            std::sort(Sortedvector.begin(), Sortedvector.end());
+
+            // Return the results in order.
+            for (const auto &Item : Sortedvector) Results.push_back(Item.second);
             return Results;
         }
     }
