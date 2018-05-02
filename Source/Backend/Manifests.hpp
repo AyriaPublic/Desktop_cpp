@@ -18,6 +18,7 @@ namespace Backend
         std::string Description;
         std::string Friendlyname;
         std::string Downloadlink;
+        std::string Sourcecodelink;
         std::vector<std::string> Games;
         std::vector<std::string> Dependencies;
     };
