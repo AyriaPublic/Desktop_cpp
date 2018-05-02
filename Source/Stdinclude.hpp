@@ -15,6 +15,7 @@
 // Standard libraries.
 #include <unordered_map>
 #include <string_view>
+#include <algorithm>
 #include <cassert>
 #include <cstdint>
 #include <cstdarg>
@@ -28,7 +29,7 @@
 #include <mutex>
 #include <ctime>
 
-// Platformspecific libraries.
+// Platform-specific libraries.
 #if defined(_WIN32)
     #include <Windows.h>
     #include <direct.h>
@@ -50,3 +51,6 @@
 #include "Utility/FNV1Hash.hpp"
 #include "Utility/Logfile.hpp"
 #include "Utility/Base64.hpp"
+
+// Frontend components.
+#include "Frontend/Commands.hpp"

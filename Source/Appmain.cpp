@@ -14,31 +14,30 @@ int main(int argc, char **argv)
     // Clear the previous sessions logfile.
     Clearlog();
 
-    return 0;
-}
-
-
-#if defined _WIN32
-BOOLEAN WINAPI DllMain(HINSTANCE hDllHandle, DWORD nReason, LPVOID Reserved)
-{
-    switch (nReason)
+    // Parse the input into commands.
+    using Command_t = std::pair<std::string, std::vector<std::string_view>>;
+    std::list<Command_t> Commands{{"help", {} }};
+    for (int i = 0; i < argc; ++i)
     {
-        case DLL_PROCESS_ATTACH:
-        {
-            // Opt-out of further thread notifications.
-            DisableThreadLibraryCalls(hDllHandle);
-
-            // Clear the previous sessions logfile.
-            Clearlog();
-        }
+        // Is a command name or argument.
+        if (Frontend::isCommand(argv[i])) Commands.emplace_back().first = argv[i];
+        else Commands.back().second.push_back(argv[i]);
     }
 
-    return TRUE;
+    // Remove the help command fallback.
+    if (Commands.size() > 1) Commands.pop_front();
+
+    // Process the commands and return.
+    for (const auto &Item : Commands)
+    {
+        // Status information.
+        Infoprint(va("Executing: %s", Item.first.c_str()));
+
+        // Result information.
+        thread_local auto Commandargv = std::make_unique<std::string_view[]>(Item.second.size());
+        if (!Frontend::Executecommand(Item.first, Item.second.size(), Commandargv.get()))
+            Infoprint(va("Command \"%s\" failed (see log)", Item.first.c_str()));
+    }
+
+    return 0;
 }
-#else
-__attribute__((constructor)) void DllMain()
-{
-    // Clear the previous sessions logfile.
-    Clearlog();
-}
-#endif

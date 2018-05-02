@@ -30,7 +30,7 @@ if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL
 		set(EXTRA_LNKFLAGS ${EXTRA_LNKFLAGS} "-m64 -static-libgcc -static-libstdc++")
     endif()
 else()
-	set(EXTRA_CMPFLAGS ${EXTRA_CMPFLAGS} "")
+	set(EXTRA_CMPFLAGS ${EXTRA_CMPFLAGS} "/permissive-")
 	set(EXTRA_LNKFLAGS ${EXTRA_LNKFLAGS} "")
 endif()
 
@@ -70,4 +70,4 @@ file(GLOB_RECURSE ASSEMBLY "Source/*.asm")
 add_executable(Desktop ${SOURCES} ${ASSEMBLY})
 set_target_properties(Desktop PROPERTIES PREFIX "")
 target_link_libraries(Desktop ${CORE_LIBS} ${MODULE_LIBS})
-
+set_target_properties(Desktop PROPERTIES COMPILE_FLAGS "${EXTRA_CMPFLAGS}" LINK_FLAGS "${EXTRA_LNKFLAGS}")
