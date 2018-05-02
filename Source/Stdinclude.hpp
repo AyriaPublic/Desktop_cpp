@@ -53,5 +53,6 @@
 #include "Utility/Logfile.hpp"
 #include "Utility/Base64.hpp"
 
-// Frontend components.
+// Our components.
 #include "Frontend/Commands.hpp"
+#include "Backend/Manifests.hpp"
