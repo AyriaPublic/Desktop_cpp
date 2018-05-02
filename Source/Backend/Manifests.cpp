@@ -11,17 +11,6 @@
 
 namespace Backend
 {
-    //struct Manifest_t
-    //{
-    //    size_t Index;
-    //    std::string Author;
-    //    std::string Description;
-    //    std::string Friendlyname;
-    //    std::string Downloadlink;
-    //    std::vector<std::string> Games;
-    //    std::vector<std::string> Dependencies;
-    //};
-
     std::vector<Manifest_t> Manifeststorage;
 
     void Initializemanifeststorage()
