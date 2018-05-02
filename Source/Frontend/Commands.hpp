@@ -3,7 +3,7 @@
     Started: 02-05-2018
     License: MIT
     Notes:
-        Provides a command parsing and callbacks.
+        Provides command parsing and callbacks.
 */
 
 #pragma once
