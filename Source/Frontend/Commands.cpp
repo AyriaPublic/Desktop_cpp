@@ -11,7 +11,7 @@
 namespace Frontend
 {
     //using Command_t = struct { std::string Usagestring; std::function<bool(size_t Argc, std::string_view *Argv)> Callback; };
-    std::unordered_map<std::string /* Commandname */, Command_t> *Commands{ nullptr };
+    std::map<std::string /* Commandname */, Command_t> *Commands{ nullptr };
 
     bool Executecommand(const std::string &Commandname, size_t Argc, std::string_view *Argv)
     {
@@ -23,7 +23,7 @@ namespace Frontend
     }
     void Registercommand(std::string_view Commandname, Command_t Command)
     {
-        if (!Commands) Commands = new std::unordered_map<std::string, Command_t>();
+        if (!Commands) Commands = new std::map<std::string, Command_t>();
         Commands->emplace(Commandname, Command);
     }
     bool isCommand(std::string_view Commandname)
@@ -41,7 +41,7 @@ namespace Frontend
 
         assert(Commands);
         for (const auto &Item : *Commands)
-            Infoprint(va("\t%s\t\t%s", Item.first.c_str(), Item.second.Usagestring.c_str()));
+            Infoprint(va("\t%-20s%s", Item.first.c_str(), Item.second.Usagestring.c_str()));
 
         return true;
     }

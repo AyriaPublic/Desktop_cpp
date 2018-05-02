@@ -28,6 +28,7 @@
 #include <string>
 #include <mutex>
 #include <ctime>
+#include <map>
 
 // Platform-specific libraries.
 #if defined(_WIN32)
