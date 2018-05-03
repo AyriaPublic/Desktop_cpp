@@ -36,8 +36,11 @@ int main(int argc, char **argv)
         // Status information.
         Infoprint(va("Executing: %s", Item.first.c_str()));
 
-        // Result information.
+        // Create a simple array with the arguments.
         thread_local auto Commandargv = std::make_unique<std::string_view[]>(Item.second.size());
+        for (size_t i = 0; i < Item.second.size(); ++i) Commandargv[i] = Item.second[i];
+
+        // Execute the command synchronously.
         if (!Frontend::Executecommand(Item.first, Item.second.size(), Commandargv.get()))
             Infoprint(va("Command \"%s\" failed (see log)", Item.first.c_str()));
     }
