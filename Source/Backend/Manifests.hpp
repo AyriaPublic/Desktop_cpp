@@ -24,7 +24,7 @@ namespace Backend
     };
 
     void Initializemanifeststorage();
-    Manifest_t Fetchmanifest(size_t Index);
+    const Manifest_t *Fetchmanifest(size_t Index);
 
     namespace Findmanifests
     {

@@ -48,10 +48,10 @@ namespace Backend
             }
         }
     }
-    Manifest_t Fetchmanifest(size_t Index)
+    const Manifest_t *Fetchmanifest(size_t Index)
     {
-        if (Index >= Manifeststorage.size()) return {};
-        return Manifeststorage[Index];
+        if (Index >= Manifeststorage.size()) return nullptr;
+        return &Manifeststorage[Index];
     }
 
     namespace Findmanifests
