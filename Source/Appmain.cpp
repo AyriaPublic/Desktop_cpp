@@ -27,7 +27,7 @@ int main(int argc, char **argv)
     // Remove the help command fallback.
     if (Commands.size() > 1) Commands.pop_front();
 
-    // Process the commands and return.
+    // Execute the command synchronously.
     for (auto &Item : Commands)
     {
         // Transform the command to lowercase.
@@ -36,13 +36,12 @@ int main(int argc, char **argv)
         // Status information.
         Infoprint(va("Executing: %s", Item.first.c_str()));
 
-        // Create a simple array with the arguments.
-        thread_local auto Commandargv = std::make_unique<std::string_view[]>(Item.second.size());
-        for (size_t i = 0; i < Item.second.size(); ++i) Commandargv[i] = Item.second[i];
-
-        // Execute the command synchronously.
-        if (!Frontend::Executecommand(Item.first, Item.second.size(), Commandargv.get()))
+        // Terminate the execution on error.
+        if (!Frontend::Executecommand(Item.first, Item.second))
+        {
             Infoprint(va("Command \"%s\" failed (see log)", Item.first.c_str()));
+            break;
+        }
     }
 
     return 0;

@@ -11,9 +11,9 @@
 
 namespace Frontend
 {
-    using Command_t = struct { std::string Usagestring; std::function<bool(size_t Argc, std::string_view *Argv)> Callback; };
+    using Command_t = struct { std::string Usagestring; std::function<bool(std::vector<std::string_view> Arguments)> Callback; };
 
-    bool Executecommand(const std::string &Commandname, size_t Argc, std::string_view *Argv);
+    bool Executecommand(const std::string &Commandname, std::vector<std::string_view> Arguments);
     void Registercommand(std::string_view Commandname, Command_t Command);
     bool isCommand(std::string_view Commandname);
 }
