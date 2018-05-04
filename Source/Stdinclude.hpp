@@ -50,6 +50,7 @@
 #include "Utility/Variadicstring.hpp"
 #include "Utility/Filesystem.hpp"
 #include "Utility/Bytebuffer.hpp"
+#include "Utility/PackageFS.hpp"
 #include "Utility/FNV1Hash.hpp"
 #include "Utility/Logfile.hpp"
 #include "Utility/Base64.hpp"
