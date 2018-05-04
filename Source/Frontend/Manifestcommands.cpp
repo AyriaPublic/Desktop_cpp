@@ -164,6 +164,9 @@ namespace Search
 
 static struct Startup { Startup()
 {
+    // Update the on-disk storage.
+    Frontend::Registercommand("update", { "download the latest plugin-info", Updatecommand });
+
     // Limited results.
     Frontend::Registercommand("search", { "find top 20 plugins by any criteria", Search::top20 });
     Frontend::Registercommand("search-full", { "find all plugins by any criteria", Search::All });
