@@ -17,7 +17,7 @@ namespace Internal
         #define MODULENAME "Invalid"
     #endif
 
-    constexpr const char *Filepath = "./Plugins/Logs/" MODULENAME ".log";
+    constexpr const char *Filepath = MODULENAME ".log";
     static std::mutex Threadguard;
     static std::FILE *Filehandle;
 }
@@ -69,7 +69,7 @@ inline void Logformatted(std::string_view Message, char Prefix)
 inline void Clearlog()
 {
     std::remove(Internal::Filepath);
-    
+
     // NOTE(Convery): We might not want to create a log by default.
     // Logformatted(MODULENAME " - Starting up..", 'I');
 }
