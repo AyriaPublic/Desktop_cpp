@@ -56,71 +56,26 @@ namespace Backend
 
     namespace Findmanifests
     {
-        std::vector<size_t> byGame(std::string_view Criteria)
+        std::vector<Searchresult_t> byDescription(std::string_view Criteria)
         {
-            std::vector<size_t> Results{};
-
-            std::for_each(Manifeststorage.cbegin(), Manifeststorage.cend(), [&](const auto &Item) -> void
-            {
-                for (const auto &Entry : Item.Games)
-                {
-                    if (std::strstr(Entry.c_str(), Criteria.data()))
-                    {
-                        Results.push_back(Item.Index);
-                        break;
-                    }
-                }
-            });
-
-            return Results;
-        }
-        std::vector<size_t> byName(std::string_view Criteria)
-        {
-            std::vector<size_t> Results{};
-
-            std::for_each(Manifeststorage.cbegin(), Manifeststorage.cend(), [&](const auto &Item) -> void
-            {
-                if (std::strstr(Item.Friendlyname.c_str(), Criteria.data()))
-                {
-                    Results.push_back(Item.Index);
-                }
-            });
-
-            return Results;
-        }
-        std::vector<size_t> byAuthor(std::string_view Criteria)
-        {
-            std::vector<size_t> Results{};
-
-            std::for_each(Manifeststorage.cbegin(), Manifeststorage.cend(), [&](const auto &Item) -> void
-            {
-                if (std::strstr(Item.Author.c_str(), Criteria.data()))
-                {
-                    Results.push_back(Item.Index);
-                }
-            });
-
-            return Results;
-        }
-        std::vector<size_t> byDescription(std::string_view Criteria)
-        {
-            std::unordered_map<size_t, size_t> Positives;
-            std::vector<std::string> Tokens{};
-            std::vector<size_t> Results{};
+            std::unordered_map<size_t /* ID */, size_t /* Relevancy */> Positives;
 
             // Tokenize the input.
+            std::vector<std::string> Tokens{};
             for (const auto &Item : Criteria)
             {
                 if (Item == ' ' || Item == '.' || Item == ',')
                 {
+                    // New token.
                     Tokens.emplace_back();
                     continue;
                 }
 
+                // Append to last token.
                 Tokens.back().push_back(Item);
             }
 
-            // Find as many tokens as possible.
+            // Find how relevant each plugin is.
             std::for_each(Manifeststorage.cbegin(), Manifeststorage.cend(), [&](const auto &Item) -> void
             {
                 for (const auto &Entry : Tokens)
@@ -132,13 +87,74 @@ namespace Backend
                 }
             });
 
-            // Sort the map by number of tokens.
-            std::vector<std::pair<size_t, size_t>> Sortedvector;
-            for (const auto &Item : Positives) Sortedvector.push_back({ Item.second, Item.first });
-            std::sort(Sortedvector.begin(), Sortedvector.end());
+            // Sort the map by relevancy.
+            std::vector<Searchresult_t> Results; Results.reserve(Positives.size());
+            for (const auto &Item : Positives) Results.push_back({ Item.first, Item.second });
+            std::sort(Results.begin(), Results.end(), [](const auto &a, const auto &b) { return a.second > b.second; });
 
-            // Return the results in order.
-            for (const auto &Item : Sortedvector) Results.push_back(Item.second);
+            return Results;
+        }
+        std::vector<Searchresult_t> byAuthor(std::string_view Criteria)
+        {
+            std::unordered_map<size_t /* ID */, size_t /* Relevancy */> Positives;
+
+            // Find how relevant each plugin is.
+            std::for_each(Manifeststorage.cbegin(), Manifeststorage.cend(), [&](const auto &Item) -> void
+            {
+                if (std::strstr(Item.Author.c_str(), Criteria.data()))
+                {
+                    Positives[Item.Index]++;
+                }
+            });
+
+            // Sort the map by relevancy.
+            std::vector<Searchresult_t> Results; Results.reserve(Positives.size());
+            for (const auto &Item : Positives) Results.push_back({ Item.first, Item.second });
+            std::sort(Results.begin(), Results.end(), [](const auto &a, const auto &b) { return a.second > b.second; });
+
+            return Results;
+        }
+        std::vector<Searchresult_t> byName(std::string_view Criteria)
+        {
+            std::unordered_map<size_t /* ID */, size_t /* Relevancy */> Positives;
+
+            // Find how relevant each plugin is.
+            std::for_each(Manifeststorage.cbegin(), Manifeststorage.cend(), [&](const auto &Item) -> void
+            {
+                if (std::strstr(Item.Friendlyname.c_str(), Criteria.data()))
+                {
+                    Positives[Item.Index]++;
+                }
+            });
+
+            // Sort the map by relevancy.
+            std::vector<Searchresult_t> Results; Results.reserve(Positives.size());
+            for (const auto &Item : Positives) Results.push_back({ Item.first, Item.second });
+            std::sort(Results.begin(), Results.end(), [](const auto &a, const auto &b) { return a.second > b.second; });
+
+            return Results;
+        }
+        std::vector<Searchresult_t> byGame(std::string_view Criteria)
+        {
+            std::unordered_map<size_t /* ID */, size_t /* Relevancy */> Positives;
+
+            // Find how relevant each plugin is.
+            std::for_each(Manifeststorage.cbegin(), Manifeststorage.cend(), [&](const auto &Item) -> void
+            {
+                for (const auto &Entry : Item.Games)
+                {
+                    if (std::strstr(Entry.c_str(), Criteria.data()))
+                    {
+                        Positives[Item.Index]++;
+                    }
+                }
+            });
+
+            // Sort the map by relevancy.
+            std::vector<Searchresult_t> Results; Results.reserve(Positives.size());
+            for (const auto &Item : Positives) Results.push_back({ Item.first, Item.second });
+            std::sort(Results.begin(), Results.end(), [](const auto &a, const auto &b) { return a.second > b.second; });
+
             return Results;
         }
     }

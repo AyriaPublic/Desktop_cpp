@@ -28,9 +28,10 @@ namespace Backend
 
     namespace Findmanifests
     {
-        std::vector<size_t> byGame(std::string_view Criteria);
-        std::vector<size_t> byName(std::string_view Criteria);
-        std::vector<size_t> byAuthor(std::string_view Criteria);
-        std::vector<size_t> byDescription(std::string_view Criteria);
+        using Searchresult_t = std::pair<size_t /* ID */, size_t /* Relevancy */>;
+        std::vector<Searchresult_t> byDescription(std::string_view Criteria);
+        std::vector<Searchresult_t> byAuthor(std::string_view Criteria);
+        std::vector<Searchresult_t> byGame(std::string_view Criteria);
+        std::vector<Searchresult_t> byName(std::string_view Criteria);
     }
 }
