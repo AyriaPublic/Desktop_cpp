@@ -18,6 +18,10 @@ bool Updatecommand(std::vector<std::string_view> Arguments)
         switch (Error)
         {
             case Backend::Updateresult_t::Nodata:
+                Infoprint("Could not download manifest-data, try again later.");
+                break;
+
+            case Backend::Updateresult_t::Noversion:
                 Infoprint("Could not download version-info, try again later.");
                 break;
         }
