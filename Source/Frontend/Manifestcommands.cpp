@@ -96,10 +96,7 @@ namespace Search
         {
             if (auto Manifest = Backend::Fetchmanifest(Item))
             {
-                Infoprint(
-                    va("%-15s  %-63s",
-                    va("%.15s", Manifest->Friendlyname.c_str()).c_str(),
-                    va("%.63s", Manifest->Description.c_str()).c_str()));
+                Infoprint(va("%-.15s  %-.63s", Manifest->Friendlyname.c_str(), Manifest->Description.c_str()));
             }
         }
     }
