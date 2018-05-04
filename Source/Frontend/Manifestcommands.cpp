@@ -87,13 +87,19 @@ namespace Search
     // Print plugin information.
     void Print(std::vector<size_t> &PluginIDs)
     {
-        // Print out the description of each manifest.
+        // Print a nice header.
         Infoprint(va("%-15s  %-63s", "Pluginname", "Description"));
+        Infoprint("--------------------------------------------------------------------------------");
+
+        // Print out the description of each manifest.
         for (const auto &Item : PluginIDs)
         {
             if (auto Manifest = Backend::Fetchmanifest(Item))
             {
-                Infoprint(va("%-15s  %-63s", Manifest->Friendlyname.c_str(), Manifest->Description.c_str()));
+                Infoprint(
+                    va("%-15s  %-63s",
+                    va("%.15s", Manifest->Friendlyname.c_str()).c_str(),
+                    va("%.63s", Manifest->Description.c_str()).c_str()));
             }
         }
     }
