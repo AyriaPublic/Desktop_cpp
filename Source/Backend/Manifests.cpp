@@ -141,8 +141,8 @@ namespace Backend
                     for (const auto &Entry : Object["Games"]) Localmanifest.Games.push_back(Entry);
                     for (const auto &Entry : Object["Dependencies"]) Localmanifest.Dependencies.push_back(Entry);
                     Localmanifest.Author = Object["Author"].is_null() ? "Unknown" : Object["Author"].get<std::string>();
+                    Localmanifest.Description  = Object["Description"].is_null() ? "" : Object["Description"].get<std::string>();
                     Localmanifest.Downloadlink = Object["Downloadlink"].is_null() ? "" : Object["Downloadlink"].get<std::string>();
-                    Localmanifest.Description  = Object["Description"].is_null() ? "Unknown" : Object["Description"].get<std::string>();
                     Localmanifest.Sourcecodelink  = Object["Sourcecodelink"].is_null() ? "Closedsource" : Object["Sourcecodelink"].get<std::string>();
                     Localmanifest.Friendlyname = Object["Friendlyname"].is_null() ? Item.substr(0, Item.find_last_of('.')) : Object["Friendlyname"].get<std::string>();
 
