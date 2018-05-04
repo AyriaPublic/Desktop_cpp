@@ -31,7 +31,7 @@ int main(int argc, char **argv)
     for (auto &Item : Commands)
     {
         // Transform the command to lowercase.
-        std::transform(Item.first.begin(), Item.first.end(), Item.first.begin(), [](auto &Item) {return (char)::tolower(Item); });
+        std::transform(Item.first.begin(), Item.first.end(), Item.first.begin(), [](auto &Item){ return (char)::tolower(Item); });
 
         // Status information.
         Infoprint(va("Executing: %s", Item.first.c_str()));

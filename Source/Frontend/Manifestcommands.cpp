@@ -11,7 +11,22 @@
 // Download the latest manifest configuration.
 bool Updatecommand(std::vector<std::string_view> Arguments)
 {
-    return {};
+    Infoprint("Checking for updates..");
+
+    if (auto Error = Backend::Updatemanifeststorage())
+    {
+        switch (Error)
+        {
+            case Backend::Updateresult_t::Nointernet:
+                Infoprint("Could not connect to the server, try again later.");
+                break;
+        }
+
+        return false;
+    }
+
+    Infoprint("Storage is up to date.");
+    return true;
 }
 
 // Search through the manifests.
