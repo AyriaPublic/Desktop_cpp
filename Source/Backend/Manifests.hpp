@@ -23,9 +23,15 @@ namespace Backend
         std::vector<std::string> Dependencies;
     };
 
+    // Read from the disk and internal map.
     void Initializemanifeststorage();
     const Manifest_t *Fetchmanifest(size_t Index);
 
+    // Update the on-disk storage.
+    enum Updateresult_t { Done = 0, Noversion = 1, Nodata = 2 };
+    Updateresult_t Updatemanifeststorage();
+
+    // Search for manifests by criteria.
     namespace Findmanifests
     {
         using Searchresult_t = std::pair<size_t /* ID */, size_t /* Relevancy */>;

@@ -8,11 +8,139 @@
 
 #include "../Stdinclude.hpp"
 #include <nlohmann/json.hpp>
+#include <curl/curl.h>
 
 namespace Backend
 {
     std::vector<Manifest_t> Manifeststorage;
 
+    // Update the on-disk storage.
+    size_t CURLWrite(void *ptr, size_t Size, size_t nmemb, std::string *Data)
+    {
+        Data->append((char*)ptr, Size * nmemb);
+        return Size * nmemb;
+    };
+    Updateresult_t Updatemanifeststorage()
+    {
+        std::string Versionstring;
+
+        // Initialize libCURL.
+        curl_global_init(CURL_GLOBAL_DEFAULT);
+
+        // Fetch the latest commit.
+        if (auto CURLHandle = curl_easy_init())
+        {
+            std::string Response;
+
+            // libCURL request-options.
+            curl_easy_setopt(CURLHandle, CURLOPT_TIMEOUT, 20L);
+            curl_easy_setopt(CURLHandle, CURLOPT_NOPROGRESS, 1L);
+            curl_easy_setopt(CURLHandle, CURLOPT_SSL_VERIFYPEER, 0L);
+            curl_easy_setopt(CURLHandle, CURLOPT_WRITEDATA, &Response);
+            curl_easy_setopt(CURLHandle, CURLOPT_WRITEFUNCTION, CURLWrite);
+            curl_easy_setopt(CURLHandle, CURLOPT_USERAGENT, "AYRIA Desktopclient");
+            curl_easy_setopt(CURLHandle, CURLOPT_URL, "https://api.github.com/repos/AyriaPublic/Desktop_cpp/commits/master");
+
+            // Perform the request and catch any errors.
+            if (auto Error = curl_easy_perform(CURLHandle))
+            {
+                Infoprint(va("HTTP error: %s", curl_easy_strerror(Error)));
+                curl_easy_cleanup(CURLHandle);
+                return Updateresult_t::Noversion;
+            }
+            else
+            {
+                curl_easy_cleanup(CURLHandle);
+            }
+
+            // Parse the result and get the SHA.
+            try
+            {
+                Versionstring = nlohmann::json::parse(Response.c_str())["sha"].get<std::string>();
+
+                // If we have the latest version...
+                if (auto Currentversion = std::getenv("AYRIA_DESKTOP_VERSION"))
+                {
+                    if (0 == std::strcmp(Versionstring.c_str(), Currentversion))
+                    {
+                        // ... and if it's downloaded.
+                        if (Fileexists(va("./Downloads/%s", Versionstring.c_str())))
+                            return Updateresult_t::Done;
+                    }
+                }
+
+                // Set the version to the latest.
+                #if defined(_WIN32)
+                _putenv(va("AYRIA_DESKTOP_VERSION=%s", Versionstring.c_str()).c_str());
+                #else
+                putenv(va("AYRIA_DESKTOP_VERSION=%s", Versionstring.c_str()).c_str());
+                #endif
+            }
+            catch (std::exception &e)
+            {
+                Infoprint(va("HTTP response error: %s", e.what()));
+                return Updateresult_t::Noversion;
+            }
+        }
+
+        // Fetch the latest data
+        if (auto CURLHandle = curl_easy_init())
+        {
+            std::string Response;
+
+            // libCURL request-options.
+            curl_easy_setopt(CURLHandle, CURLOPT_TIMEOUT, 20L);
+            curl_easy_setopt(CURLHandle, CURLOPT_NOPROGRESS, 1L);
+            curl_easy_setopt(CURLHandle, CURLOPT_SSL_VERIFYPEER, 0L);
+            curl_easy_setopt(CURLHandle, CURLOPT_WRITEDATA, &Response);
+            curl_easy_setopt(CURLHandle, CURLOPT_WRITEFUNCTION, CURLWrite);
+            curl_easy_setopt(CURLHandle, CURLOPT_USERAGENT, "AYRIA Desktopclient");
+            curl_easy_setopt(CURLHandle, CURLOPT_URL, "https://codeload.github.com/AyriaPublic/Desktop_cpp/zip/master");
+
+            // Perform the request and catch any errors.
+            if (auto Error = curl_easy_perform(CURLHandle))
+            {
+                Infoprint(va("HTTP error: %s", curl_easy_strerror(Error)));
+                curl_easy_cleanup(CURLHandle);
+                return Updateresult_t::Nodata;
+            }
+            else
+            {
+                curl_easy_cleanup(CURLHandle);
+            }
+
+            // Ensure that the directories exists.
+            #if defined(_WIN32)
+            _mkdir("./Manifests/");
+            _mkdir("./Downloads/");
+            #else
+            mkdir("./Manifests/");
+            mkdir("./Downloads/");
+            #endif
+
+            // Save the data to disk.
+            Writefile(va("./Downloads/%s", Versionstring.c_str()), Response);
+            std::remove("./Downloads/Latest.zip");
+
+            // Set the latest link to the download.
+            #if defined(_WIN32)
+            CreateSymbolicLinkA("./Downloads/Latest.zip", Versionstring.c_str(), NULL);
+            #else
+            symlink("./Downloads/Latest.zip", Versionstring.c_str();
+            #endif
+        }
+
+        // Parse the archive for manifests and overwrite them.
+        for (const auto &Item : Package::Findfiles("/Manifests/"))
+        {
+            auto Filebuffer = Package::Readfile(Item);
+            Writefile(va("./Manifests/%s", Item.substr(Item.find_last_of('/')).c_str()), Filebuffer);
+        }
+
+        return {};
+    }
+
+    // Read from the disk and internal map.
     void Initializemanifeststorage()
     {
         for (const auto &Item : Listfiles("./Manifests", ".json"))
@@ -54,6 +182,7 @@ namespace Backend
         return &Manifeststorage[Index];
     }
 
+    // Search for manifests by criteria.
     namespace Findmanifests
     {
         std::vector<Searchresult_t> byDescription(std::string_view Criteria)
