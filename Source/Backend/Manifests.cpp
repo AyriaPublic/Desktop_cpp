@@ -175,7 +175,7 @@ namespace Backend
             std::unordered_map<size_t /* ID */, size_t /* Relevancy */> Positives;
 
             // Tokenize the input.
-            std::vector<std::string> Tokens{};
+            std::vector<std::string> Tokens{ "" };
             for (const auto &Item : Criteria)
             {
                 if (Item == ' ' || Item == '.' || Item == ',')
