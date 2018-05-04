@@ -14,11 +14,17 @@ int main(int argc, char **argv)
     // Clear the previous sessions logfile.
     Clearlog();
 
+    // Initialize the storage.
+    Backend::Initializemanifeststorage();
+
     // Parse the input into commands.
     using Command_t = std::pair<std::string, std::vector<std::string_view>>;
     std::list<Command_t> Commands{{"help", {} }};
     for (int i = 0; i < argc; ++i)
     {
+        // If we got the path as argv[0], skip.
+        if (std::strstr(argv[0], "Desktop")) continue;
+
         // Is a command name or argument.
         if (Frontend::isCommand(argv[i])) Commands.emplace_back().first = argv[i];
         else Commands.back().second.push_back(argv[i]);
