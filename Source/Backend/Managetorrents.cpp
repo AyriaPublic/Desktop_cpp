@@ -81,11 +81,13 @@ namespace Backend
     // Add new torrents to the queue.
     void Addtorrent(std::string Magnetlink)
     {
-        libtorrent::error_code Error;
+        libtorrent::error_code Error{};
         libtorrent::add_torrent_params Param;
         libtorrent::parse_magnet_uri(Magnetlink, Param, Error);
         Param.save_path = ".\\Downloads\\";
         Param.upload_limit = 42000;
+
+        if (Error) return;
 
         hasTorrents = true;
         Initializetorrenting();
