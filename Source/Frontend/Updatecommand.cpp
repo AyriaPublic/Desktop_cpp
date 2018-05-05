@@ -27,7 +27,7 @@ namespace
     {
         Startup()
         {
-            Frontend::Registercommand("update", { "Update the plugin information to the latest version", Update });
+            Frontend::Registercommand("update", { "Update the plugininformation to the latest version", Update });
         }
     } Loader{};
 }
