@@ -25,14 +25,17 @@ void Printusage(std::vector<Frontend::Argument_t> Arguments)
 }
 
 // Add the commands on startup.
-static struct Startup
+namespace
 {
-    Startup()
+    static struct Startup
     {
-        Frontend::Registercommand("?", { "Displays usageinformation", Printusage });
-        Frontend::Registercommand("help", { "Displays usageinformation", Printusage });
-    }
-} Loader{};
+        Startup()
+        {
+            Frontend::Registercommand("?", { "Displays usageinformation", Printusage });
+            Frontend::Registercommand("help", { "Displays usageinformation", Printusage });
+        }
+    } Loader{};
+}
 
 // Exported methods.
 namespace Frontend
