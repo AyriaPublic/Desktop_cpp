@@ -11,42 +11,46 @@
 // Universal entrypoint.
 int main(int argc, char **argv)
 {
+    int Index = 0;
+    std::string Command;
+
     // Clear the previous sessions logfile.
     Clearlog();
 
-    // Initialize the storage.
-    Backend::Initializemanifeststorage();
+    // Fetch the command, maybe skip the first.
+    if (std::strstr(argv[Index], "Desktop")) Index++;
+    if(Index < argc) Command = argv[Index++];
+    else Command = "help";
 
-    // Parse the input into commands.
-    using Command_t = std::pair<std::string, std::vector<std::string_view>>;
-    std::list<Command_t> Commands{{"help", {} }};
-    for (int i = 0; i < argc; ++i)
+    // Parse the input into a arguments.
+    std::vector<Frontend::Argument_t> Arguments{ {} };
+    for (; Index < argc; ++Index)
     {
-        // If we got the path as argv[0], skip.
-        if (std::strstr(argv[0], "Desktop")) continue;
-
-        // Is a command name or argument.
-        if (Frontend::isCommand(argv[i])) Commands.emplace_back().first = argv[i];
-        else Commands.back().second.push_back(argv[i]);
+        // Create a new argument per switch.
+        if (argv[Index][0] == '-') Arguments.emplace_back().first = argv[Index];
+        else Arguments.back().second.push_back(argv[Index]);
     }
 
-    // Remove the help command fallback.
-    if (Commands.size() > 1) Commands.pop_front();
+    // Transform the command to lowercase.
+    std::transform(Command.begin(), Command.end(), Command.begin(), [](const auto &Item){ return (char)::tolower(Item); });
 
-    // Execute the command synchronously.
-    for (auto &Item : Commands)
+    // Process the command.
     {
-        // Transform the command to lowercase.
-        std::transform(Item.first.begin(), Item.first.end(), Item.first.begin(), [](auto &Item){ return (char)::tolower(Item); });
-
         // Status information.
-        Infoprint(va("Executing: %s", Item.first.c_str()));
+        Infoprint(va("Executing: %s", Command.c_str()));
 
-        // Terminate the execution on error.
-        if (!Frontend::Executecommand(Item.first, Item.second))
+        Frontend::Executecommand(Command, Arguments);
+    }
+
+    // Wait for any torrents in the backend to finish.
+    if (Backend::Activetorrents())
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(2));
+
+        while (Backend::Activetorrents())
         {
-            Infoprint(va("Command \"%s\" failed (see log)", Item.first.c_str()));
-            break;
+            Infoprint(va("Waiting for %u torrents..", Backend::Activetorrents()));
+            std::this_thread::sleep_for(std::chrono::seconds(2));
         }
     }
 

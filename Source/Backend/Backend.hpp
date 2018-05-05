@@ -1,9 +1,9 @@
 /*
     Initial author: Convery (tcn@ayria.se)
-    Started: 02-05-2018
+    Started: 05-05-2018
     License: MIT
     Notes:
-        Provides parsing of the manifests directory.
+        Provides access to the backend workers.
 */
 
 #pragma once
@@ -11,6 +11,7 @@
 
 namespace Backend
 {
+    // Manifest management.
     struct Manifest_t
     {
         size_t Index;
@@ -22,16 +23,18 @@ namespace Backend
         std::vector<std::string> Games;
         std::vector<std::string> Dependencies;
     };
-
-    // Read from the disk and internal map.
-    void Initializemanifeststorage();
+    enum class Updateresult_t
+    {
+        Sucess,
+        Missingversion,
+        Missingwork,
+        Missingdata,
+        Max
+    };
+    Updateresult_t Updatemanifests();
     const Manifest_t *Fetchmanifest(size_t Index);
 
-    // Update the on-disk storage.
-    enum Updateresult_t { Done = 0, Noversion = 1, Nodata = 2 };
-    Updateresult_t Updatemanifeststorage();
-
-    // Search for manifests by criteria.
+    // Find a manifest by criteria.
     namespace Findmanifests
     {
         using Searchresult_t = std::pair<size_t /* ID */, size_t /* Relevancy */>;
@@ -40,4 +43,9 @@ namespace Backend
         std::vector<Searchresult_t> byGame(std::string_view Criteria);
         std::vector<Searchresult_t> byName(std::string_view Criteria);
     }
+
+    // Torrent management.
+    void Addtorrent(std::string Magnetlink);
+    size_t Torrentcount();
+    bool Activetorrents();
 }

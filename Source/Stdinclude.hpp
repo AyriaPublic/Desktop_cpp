@@ -56,6 +56,5 @@
 #include "Utility/Base64.hpp"
 
 // Our components.
-#include "Frontend/Commands.hpp"
-#include "Backend/Manifests.hpp"
-#include "Backend/Torrents.hpp"
+#include "Frontend/Frontend.hpp"
+#include "Backend/Backend.hpp"
