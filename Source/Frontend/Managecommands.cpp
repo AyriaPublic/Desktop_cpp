@@ -21,6 +21,14 @@ void Printusage(std::vector<Frontend::Argument_t> Arguments)
     for (const auto &Item : *Commands)
     {
         Infoprint(va("%-15s  %-.63s", Item.first.c_str(), Item.second.Description.c_str()));
+        for (int i = 1; i < 4; ++i)
+        {
+            if (Item.second.Description.size() > 80 * i)
+            {
+                Infoprint(va("%-15s  %-.63s", "", Item.second.Description.c_str() + 80 * i));
+            }
+        }
+
     }
 }
 

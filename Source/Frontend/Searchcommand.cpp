@@ -179,7 +179,7 @@ namespace
         {
             Frontend::Registercommand("search", { va("%-80s%-80s%-80s", "search for plugins, switches:",
                                                      "-n [name1 name2 ...] -g [game1 game2 ...]",
-                                                     "-a [author 1 author2 ...] -d [description tokens ...]"),
+                                                     "-a [author1 author2 ...] -d [description tokens ...]"),
                                       Search });
         }
     } Loader{};
