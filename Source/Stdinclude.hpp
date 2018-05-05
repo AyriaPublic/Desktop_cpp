@@ -58,3 +58,4 @@
 // Our components.
 #include "Frontend/Commands.hpp"
 #include "Backend/Manifests.hpp"
+#include "Backend/Torrents.hpp"

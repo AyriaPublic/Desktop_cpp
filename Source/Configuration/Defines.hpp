@@ -38,4 +38,9 @@
 // Remove some Windows annoyance.
 #if defined(_WIN32)
     #define _CRT_SECURE_NO_WARNINGS
+    #define WIN32_LEAN_AND_MEAN
 #endif
+
+// Libtorrent configuration.
+#define TORRENT_NO_DEPRECATE
+

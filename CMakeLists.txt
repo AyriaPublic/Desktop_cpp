@@ -17,7 +17,7 @@ set(CMAKE_DEBUG_POSTFIX "d")
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
 	set(CORE_LIBS ${CORELIBS} dl pthread)
 else()
-	set(CORE_LIBS ${CORE_LIBS} ws2_32)
+	set(CORE_LIBS ${CORE_LIBS} ws2_32 DbgHelp Iphlpapi)
 endif()
 
 # Extra flags for compiling and linking.
@@ -60,13 +60,16 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 endif()
 
 # Third-party libraries, prefer find_library() and find_path().
+find_package(Boost COMPONENTS system)
 find_package(OPENSSL)
 find_library(Z_LIB zlib)
 find_library(HTTP_LIB libcurl)
 find_path(HTTP_INC curl/curl.h)
 find_path(JSON_INC nlohmann/json.hpp)
-set(MODULE_INCS ${MODULE_INCS} ${JSON_INC} ${HTTP_INC} ${OPENSSL_INCLUDE_DIR})
-set(MODULE_LIBS ${MODULE_LIBS} ${HTTP_LIB} ${OPENSSL_LIBRARIES} ${Z_LIB})
+find_library(DHT_LIB torrent-rasterbar)
+find_path(DHT_INC libtorrent/alert.hpp)
+set(MODULE_INCS ${MODULE_INCS} ${JSON_INC} ${HTTP_INC} ${OPENSSL_INCLUDE_DIR} ${DHT_INC})
+set(MODULE_LIBS ${MODULE_LIBS} ${HTTP_LIB} ${OPENSSL_LIBRARIES} ${Z_LIB} ${DHT_LIB} ${Boost_LIBRARIES})
 include_directories(${MODULE_INCS})
 
 # Just pull all the files from /Source
