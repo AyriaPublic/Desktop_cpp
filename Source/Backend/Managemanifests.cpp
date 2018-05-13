@@ -140,7 +140,7 @@ namespace Backend
                 Writefile(va("./Manifests/%s", Item.substr(Item.find_last_of('/')).c_str()), Filebuffer);
             }
 
-            // Trigger and internal update.
+            // Trigger an internal update.
             Initializemanifeststorage(true);
             return Updateresult_t::Sucess;
         }
